@@ -255,7 +255,7 @@ class BarcodeScannerViewController: UIViewController {
     // Inititlize components
     func initBarcodeComponents(){
         
-        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: AVMediaType.video, position: .back)
+        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInUltraWideCamera, .builtInTelephotoCamera, .builtInWideAngleCamera], mediaType: AVMediaType.video, position: .back)
         // Get the back-facing camera for capturing videos
         guard let captureDevice = deviceDiscoverySession.devices.first else {
             print("Failed to get the camera device")
@@ -323,6 +323,7 @@ class BarcodeScannerViewController: UIViewController {
         
         // Start video capture.
         captureSession.startRunning()
+        captureSession.sessionPreset = .hd1920x1080
         
         let scanRect = CGRect(x: xCor, y: yCor, width: self.isOrientationPortrait ? (screenSize.width*0.8) : (screenSize.height*0.8), height: screenHeight)
         
@@ -353,7 +354,7 @@ class BarcodeScannerViewController: UIViewController {
             self.view.bringSubviewToFront(switchCameraButton)
         }
         setConstraintsForControls()
-        self.drawLine()
+        // self.drawLine()
         processCompletionCallback()
     }
     
@@ -412,6 +413,7 @@ class BarcodeScannerViewController: UIViewController {
         
         do {
             try device.lockForConfiguration()
+            device.focusMode = .continuousAutoFocus
             
             if (mode == .off) {
                 device.torchMode = AVCaptureDevice.TorchMode.off
